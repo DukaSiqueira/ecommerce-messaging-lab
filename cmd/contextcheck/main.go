@@ -9,13 +9,11 @@ import (
 
 func main() {
 	fmt.Println("Contexto e propagação de erros")
-
 	pedido := "Pedido A-001"
 
 	ctx := context.Background()
 	requestCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
-	/* Caso a função termine antes dos 10 segundos ou tenho algum early return o contexto
-	emitirá o aviso de que deve encerrar */
+	// encerra o contexto quando a função terminar
 	defer cancel()
 
 	err := processarPedido(requestCtx, pedido)
