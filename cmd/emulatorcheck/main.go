@@ -48,8 +48,8 @@ func main() {
 	}
 	fmt.Println("tópico a ser criado:", topicRequest.GetName())
 
-	topicCtx, topiCancel := context.WithTimeout(ctx, 5*time.Second)
-	defer topiCancel()
+	topicCtx, topicCancel := context.WithTimeout(ctx, 5*time.Second)
+	defer topicCancel()
 
 	createdTopic, err := client.TopicAdminClient.CreateTopic(
 		topicCtx,
@@ -65,7 +65,38 @@ func main() {
 		return
 	}
 
-	subscriptionID := "inventory-order-events-sub"
+	// --------------------------------------------------------------------
+
+	subscriptionsIDs := []string{
+		"inventory-order-events-sub",
+		"notification-order-events-sub",
+	}
+
+	for _, subscriptionID := range subscriptionsIDs {
+		err = ensureSubscription(
+			ctx,
+			client,
+			projectID,
+			topicName,
+			subscriptionID,
+		)
+
+		if err != nil {
+			log.Printf("erro ao criar subscription: %v", err)
+			return
+		}
+	}
+
+	fmt.Println("configuração do Google Pub/Sub concluída")
+}
+
+func ensureSubscription(
+	ctx context.Context,
+	client *pubsub.Client,
+	projectID string,
+	topicName string,
+	subscriptionID string,
+) error {
 	subscriptionName := fmt.Sprintf(
 		"projects/%s/subscriptions/%s",
 		projectID,
@@ -76,12 +107,12 @@ func main() {
 		Name:  subscriptionName,
 		Topic: topicName,
 	}
-
 	fmt.Println("subscription a ser criada:", subscriptionRequest.GetName())
 	fmt.Println("tópico da subscription:", subscriptionRequest.GetTopic())
 
 	subscriptionCtx, subscriptionCancel := context.WithTimeout(ctx, 5*time.Second)
 	defer subscriptionCancel()
+
 	subscriptionCreated, err := client.SubscriptionAdminClient.CreateSubscription(
 		subscriptionCtx,
 		subscriptionRequest,
@@ -94,9 +125,8 @@ func main() {
 		fmt.Println("subscription já configurada:", subscriptionName)
 		fmt.Println("subscription do tópico:", topicName)
 	} else {
-		log.Printf("erro ao criar subscription: %v", err)
-		return
+		return err
 	}
 
-	fmt.Println("cliente Google Pub/Sub configurado")
+	return nil
 }
