@@ -67,12 +67,12 @@ func main() {
 
 	// --------------------------------------------------------------------
 
-	subscriptionsIDs := []string{
+	subscriptionIDs := []string{
 		"inventory-order-events-sub",
 		"notification-order-events-sub",
 	}
 
-	for _, subscriptionID := range subscriptionsIDs {
+	for _, subscriptionID := range subscriptionIDs {
 		err = ensureSubscription(
 			ctx,
 			client,
