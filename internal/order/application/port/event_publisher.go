@@ -7,5 +7,5 @@ import (
 )
 
 type EventPublisher interface {
-	Publish(ctx context.Context, order domain.OrderPlaced) error
+	Publish(ctx context.Context, event domain.OrderPlaced) error
 }
