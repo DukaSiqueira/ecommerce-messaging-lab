@@ -45,9 +45,9 @@ func (useCase *PlaceOrder) Execute(
 	}
 
 	event := domain.OrderPlaced{
-		OrderID:    input.OrderID,
-		EventID:    "order-placed:" + input.OrderID,
-		Items:      eventItems,
+		OrderID: input.OrderID,
+		EventID: "order-placed:" + input.OrderID,
+		Items: eventItems,
 		CustomerID: input.CustomerID,
 		OccurredAt: time.Now().UTC(),
 	}
